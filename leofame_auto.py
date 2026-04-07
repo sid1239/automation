@@ -1,13 +1,14 @@
 """
-Daily Leofame Instagram automation (Views + Likes + Saves + Shares)
-- Runs all 4 services
-- Waits 1 minute AFTER each click
+Leofame Instagram Automation
+- Runs on 4 services: views, likes, saves, shares
+- Uses the same Instagram reel link on every page
+- Uses website default selected values
 - Takes screenshot immediately after click
-- Takes another screenshot after 1 minute
+- Waits 1 minute
+- Takes another screenshot
 - Sends both screenshots to Telegram
-
-Requirements:
-    pip install selenium webdriver-manager requests
+- Skips failed pages and continues
+- GitHub Actions ready (headless Chrome)
 """
 
 import time
@@ -27,9 +28,8 @@ URLS = [
 ]
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DWwKjHqkkAm/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
-INTERVAL_SECONDS = 24 * 60 * 60
 
-# ADD YOUR DETAILS HERE
+# Replace with your real Telegram bot details
 TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
 TELEGRAM_CHAT_ID = "1814769108"
 
@@ -57,46 +57,51 @@ def submit_all_services():
         options=options,
     )
 
+    wait = WebDriverWait(driver, 25)
+
     try:
-        wait = WebDriverWait(driver, 20)
-
         for url in URLS:
-            print(f"Opening {url}")
-            driver.get(url)
+            try:
+                print(f"Opening {url}")
+                driver.get(url)
 
-            link_box = wait.until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "input[placeholder*='instagram.com']")
+                # Paste Instagram reel link
+                link_box = wait.until(
+                    EC.presence_of_element_located(
+                        (By.CSS_SELECTOR, "input[placeholder*='instagram.com']")
+                    )
                 )
-            )
-            link_box.clear()
-            link_box.send_keys(INSTAGRAM_LINK)
+                link_box.clear()
+                link_box.send_keys(INSTAGRAM_LINK)
 
-            button = wait.until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, "//button[contains(., 'Get free')]")
+                # Click default free button
+                button = wait.until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, "//button[contains(., 'Get free')]")
+                    )
                 )
-            )
-            button.click()
-            print(f"Submitted successfully for: {url}")
+                button.click()
+                print(f"Submitted successfully for: {url}")
 
-            page_name = url.split("/")[-1]
+                page_name = url.split("/")[-1]
 
-            # screenshot immediately after click
-            shot1 = f"{page_name}_after_click.png"
-            driver.save_screenshot(shot1)
-            send_to_telegram(shot1, f"{page_name} - immediately after click")
+                # Screenshot immediately after click
+                shot1 = f"{page_name}_after_click.png"
+                driver.save_screenshot(shot1)
+                send_to_telegram(shot1, f"{page_name} - immediately after click")
 
-            # wait 1 minute after click
-            time.sleep(60)
+                # Wait 1 minute
+                time.sleep(60)
 
-            # screenshot after 1 minute
-            shot2 = f"{page_name}_after_1min.png"
-            driver.save_screenshot(shot2)
-            send_to_telegram(shot2, f"{page_name} - after 1 minute")
+                # Screenshot after 1 minute
+                shot2 = f"{page_name}_after_1min.png"
+                driver.save_screenshot(shot2)
+                send_to_telegram(shot2, f"{page_name} - after 1 minute")
 
-    except Exception as e:
-        print(f"Error: {e}")
+            except Exception as page_error:
+                print(f"Failed on {url}: {page_error}")
+                continue
+
     finally:
         driver.quit()
 
