@@ -2,7 +2,7 @@ name: Daily Instagram Automation
 
 on:
   schedule:
-    - cron: '50 3 * * *'
+    - cron: '30 2 * * *'
   workflow_dispatch:
 
 jobs:
