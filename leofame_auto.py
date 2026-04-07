@@ -1,14 +1,15 @@
 """
 Leofame Instagram Automation
 - Runs on 4 services: views, likes, saves, shares
-- Uses the same Instagram reel link on every page
+- Uses same Instagram reel link
 - Uses website default selected values
+- Case-insensitive button detection (fixes Get Free Shares)
 - Takes screenshot immediately after click
 - Waits 1 minute
 - Takes another screenshot
 - Sends both screenshots to Telegram
 - Skips failed pages and continues
-- GitHub Actions ready (headless Chrome)
+- GitHub Actions ready
 """
 
 import time
@@ -29,7 +30,6 @@ URLS = [
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DWwKjHqkkAm/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
 
-# Replace with your real Telegram bot details
 TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
 TELEGRAM_CHAT_ID = "1814769108"
 
@@ -65,7 +65,7 @@ def submit_all_services():
                 print(f"Opening {url}")
                 driver.get(url)
 
-                # Paste Instagram reel link
+                # Find Instagram link input
                 link_box = wait.until(
                     EC.presence_of_element_located(
                         (By.CSS_SELECTOR, "input[placeholder*='instagram.com']")
@@ -74,10 +74,13 @@ def submit_all_services():
                 link_box.clear()
                 link_box.send_keys(INSTAGRAM_LINK)
 
-                # Click default free button
+                # Case-insensitive Get Free button
                 button = wait.until(
                     EC.element_to_be_clickable(
-                        (By.XPATH, "//button[contains(., 'Get free')]")
+                        (
+                            By.XPATH,
+                            "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'get free')]",
+                        )
                     )
                 )
                 button.click()
