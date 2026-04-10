@@ -16,7 +16,7 @@ import time
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -30,8 +30,8 @@ URLS = [
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DU07x-mDx8e/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
 
-TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
-TELEGRAM_CHAT_ID = "1814769108"
+TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN"
+TELEGRAM_CHAT_ID = "YOUR_CHAT_ID"
 
 
 def send_to_telegram(image_path, caption=""):
@@ -73,6 +73,14 @@ def submit_all_services():
                 )
                 link_box.clear()
                 link_box.send_keys(INSTAGRAM_LINK)
+
+                # Select dropdowns
+                dropdowns = wait.until(
+                    EC.presence_of_all_elements_located((By.TAG_NAME, "select"))
+                )
+
+                Select(dropdowns[0]).select_by_visible_text("As fast as possible")
+                Select(dropdowns[1]).select_by_visible_text("24 Hours")
 
                 # Case-insensitive Get Free button
                 button = wait.until(
