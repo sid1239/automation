@@ -28,7 +28,7 @@ URLS = [
     "https://leofame.com/free-instagram-shares",
 ]
 
-INSTAGRAM_LINK = "https://www.instagram.com/reel/DWv-n0PCbgM/?igsh=MW91ZjNyMm15eGk5NA=="
+INSTAGRAM_LINK = "https://www.instagram.com/reel/DU07x-mDx8e/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
 
 TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
 TELEGRAM_CHAT_ID = "1814769108"
