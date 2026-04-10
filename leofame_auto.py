@@ -2,7 +2,7 @@
 Leofame Instagram Automation
 - Runs on 4 services: views, likes, saves, shares
 - Uses same Instagram reel link
-- Uses website default selected values
+- Selects "24 Hours" delivery option reliably
 - Case-insensitive button detection (fixes Get Free Shares)
 - Takes screenshot immediately after click
 - Waits 1 minute
@@ -30,8 +30,8 @@ URLS = [
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DU07x-mDx8e/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
 
-TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
-TELEGRAM_CHAT_ID = "1814769108"
+TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN"
+TELEGRAM_CHAT_ID = "YOUR_CHAT_ID"
 
 
 def send_to_telegram(image_path, caption=""):
@@ -62,8 +62,11 @@ def submit_all_services():
     try:
         for url in URLS:
             try:
-                print(f"Opening {url}")
+                print(f"\nOpening {url}")
                 driver.get(url)
+
+                # Wait for page to fully load
+                time.sleep(3)
 
                 # Find Instagram link input
                 link_box = wait.until(
@@ -73,17 +76,24 @@ def submit_all_services():
                 )
                 link_box.clear()
                 link_box.send_keys(INSTAGRAM_LINK)
+                print(f"Instagram link entered.")
 
-                # Select dropdowns
+                # Select dropdowns - find "24 Hours" option reliably
                 dropdowns = wait.until(
                     EC.presence_of_all_elements_located((By.TAG_NAME, "select"))
                 )
+                print(f"Found {len(dropdowns)} dropdown(s).")
 
-                # Choose second option = 24 Hours
-                if len(dropdowns) > 1:
-                    Select(dropdowns[1]).select_by_index(1)
+                for dropdown in dropdowns:
+                    select = Select(dropdown)
+                    options_text = [o.text.strip() for o in select.options]
+                    print(f"Dropdown options: {options_text}")
+                    if "24 Hours" in options_text:
+                        select.select_by_visible_text("24 Hours")
+                        print("Selected '24 Hours' successfully.")
+                        break
 
-                # Case-insensitive Get Free button
+                # Case-insensitive "Get Free" button click
                 button = wait.until(
                     EC.element_to_be_clickable(
                         (
@@ -93,7 +103,7 @@ def submit_all_services():
                     )
                 )
                 button.click()
-                print(f"Submitted successfully for: {url}")
+                print(f"Button clicked successfully for: {url}")
 
                 page_name = url.split("/")[-1]
 
@@ -101,14 +111,17 @@ def submit_all_services():
                 shot1 = f"{page_name}_after_click.png"
                 driver.save_screenshot(shot1)
                 send_to_telegram(shot1, f"{page_name} - immediately after click")
+                print(f"Screenshot 1 sent: {shot1}")
 
                 # Wait 1 minute
+                print("Waiting 1 minute...")
                 time.sleep(60)
 
                 # Screenshot after 1 minute
                 shot2 = f"{page_name}_after_1min.png"
                 driver.save_screenshot(shot2)
                 send_to_telegram(shot2, f"{page_name} - after 1 minute")
+                print(f"Screenshot 2 sent: {shot2}")
 
             except Exception as page_error:
                 print(f"Failed on {url}: {page_error}")
@@ -116,6 +129,7 @@ def submit_all_services():
 
     finally:
         driver.quit()
+        print("\nAll services processed. Browser closed.")
 
 
 if __name__ == "__main__":
