@@ -30,8 +30,8 @@ URLS = [
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DU07x-mDx8e/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
 
-TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN"
-TELEGRAM_CHAT_ID = "YOUR_CHAT_ID"
+TELEGRAM_BOT_TOKEN = "8793923431:AAH5eX0CGpos4v6u1XEMO8LTLxPm-QcH3rA"
+TELEGRAM_CHAT_ID = "1814769108"
 
 
 def send_to_telegram(image_path, caption=""):
