@@ -24,8 +24,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 URLS = [
     "https://leofame.com/free-instagram-views",
     "https://leofame.com/free-instagram-likes",
-    "https://leofame.com/free-instagram-saves",
-    "https://leofame.com/free-instagram-shares",
+    "",
+    "",
 ]
 
 INSTAGRAM_LINK = "https://www.instagram.com/reel/DU07x-mDx8e/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
